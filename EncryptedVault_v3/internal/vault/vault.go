@@ -1,21 +1,20 @@
 package vault
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
-	"bufio"
 
-	"Stage-3-EncryptedVault/internal/models"
-	"Stage-3-EncryptedVault/internal/storage"
+	"EncryptedVault_v3/internal/models"
+	"EncryptedVault_v3/internal/storage"
 )
-
 
 func ListContacts(password string) {
 
 	contacts, err := storage.LoadContacts(password)
 
-	if err != nil{
+	if err != nil {
 		fmt.Println("Error: ", err)
 		return
 	}
@@ -25,9 +24,8 @@ func ListContacts(password string) {
 	}
 }
 
+func AddContact(password string) {
 
-func AddContact (password string){
-	
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Name: ")
@@ -44,7 +42,7 @@ func AddContact (password string){
 	newID := 1
 
 	if len(contacts) > 0 {
-		newID = contacts[len(contacts)-1].ID +1
+		newID = contacts[len(contacts)-1].ID + 1
 	}
 
 	newContact := models.Contact{ID: newID, Name: name, Phone: phone}
@@ -58,10 +56,9 @@ func AddContact (password string){
 	}
 }
 
-
 func DeleteContact(password string) {
-	
-	var id int 
+
+	var id int
 	fmt.Print("Enter ID to delete: ")
 	fmt.Scanln(&id)
 

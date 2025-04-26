@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"encoding/json"
 
-	"Stage-3-EncryptedVault/internal/models"
-	"Stage-3-EncryptedVault/internal/crypto"
+	"EncryptedVault_v3/internal/crypto"
+	"EncryptedVault_v3/internal/models"
 )
 
 const VaultFile = "encrypted_contacts.vault"

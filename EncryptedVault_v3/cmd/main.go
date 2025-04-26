@@ -6,7 +6,7 @@ import (
     "bufio"
     "strings"
 
-    "Stage-3-EncryptedVault/internal/vault"
+    "EncryptedVault_v3/internal/vault"
 )
 
 func main() {
