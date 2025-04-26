@@ -19,7 +19,7 @@
 
 ## 📁 File Structure
 
-    ModularVault/
+    Stage-2-ModularVault/
     ├── cmd/
     │   └── main.go
     │
@@ -60,5 +60,14 @@
 - The application still uses **plain JSON** with no encryption.
 - File paths are relative; `contacts.json` is created in the root dir.
 - Prepares the project for adding encryption and user authentication in the next stage.
+
+---
+
+## 📈 Current Level
+
+| Level | Feature                              |
+|-------|--------------------------------------|
+| 1     | CLI JSON Contact Manager             |
+| 2     | Modular Project Structure            |
 
 ---

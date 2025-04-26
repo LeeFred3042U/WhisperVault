@@ -15,7 +15,7 @@
 
 ## 📁 File Structure
 
-    ContactVault-Lite/
+    Stage-1-ContactVault-Lite/
     ├── main.go
     └── contacts.json
 
@@ -38,5 +38,13 @@
 - No third-party packages are used — only Go standard library.
 - All logic is written in a **single `main.go` file** for minimalism.
 - Error handling is basic — future versions will improve this.
+
+---
+
+## 📈 Current Level
+
+| Level | Feature                              |
+|-------|--------------------------------------|
+| 1     | CLI JSON Contact Manager             |
 
 ---

@@ -5,7 +5,6 @@ import (
     "crypto/cipher"
     "crypto/rand"
     "crypto/sha256"
-    "encoding/hex"
     "errors"
     "io"
 )
@@ -35,7 +34,7 @@ func Encrypt(data []byte, password string) ([]byte, error) {
 	//NONCE = Number used ones a unique id we can say 
     nonce := make([]byte, aes.BlockSize)
 
-	//nonce is filled with randomnes and filled with randomness from crypto/rand.Reader
+	//nonce is filled with randomness from crypto/rand.Reader
     if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
         return nil, err
     }
@@ -54,4 +53,32 @@ func Encrypt(data []byte, password string) ([]byte, error) {
 
 	//prepend the nonce to the ciphertext and return it as [nonce][ciphertext]
     return append(nonce, ciphertext...), nil
+}
+
+
+
+//Decrypt encrypted data
+func Decrypt(encrypted []byte, password string) ([]byte, error) {
+    
+    if len(encrypted) < aes.BlockSize {
+        return nil, errors.New("invalid encrypted data")
+    }
+
+    key := GenerateKey(password)
+
+    //Seperate Nonce and Ciphertext 
+    nonce := encrypted[:aes.BlockSize]
+    ciphertext := encrypted[aes.BlockSize:]
+
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        return nil, err
+    }
+
+    stream := cipher.NewCTR(block, nonce)
+    decrypted := make([]byte, len(ciphertext))
+    stream.XORKeyStream(decrypted, ciphertext)
+
+    return decrypted, nil
+	
 }
