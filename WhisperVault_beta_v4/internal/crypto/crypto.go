@@ -1,6 +1,6 @@
 package crypto
 
-import {
+import (
 	"io"
 	"crypto/rand"
 	"crypto/sha256"
@@ -9,14 +9,14 @@ import {
 	"crypto/cipher"
 	"crypto/hmac"
 	"errors"
-}
+)
 
 //Constants:
-const {
+const (
 	SaltSize    = 16		//16 bytes salt
 	Iterations  = 100_000	//100k iterations
 	KeyLength   = 32		//32 bytes = 256 bits(AES - 256)
-}
+)
 
 
 //This func gives a strong encryption key from password and salt
@@ -38,12 +38,12 @@ func GenerateSalt() ([]byte, error) {
 
 
 //This func encrypts the data and adds on salt + HMAC
-func Encrypt{data []byte, password string} ([]byte, error) {
+func Encrypt(data []byte, password string) ([]byte, error) {
 	
 	salt, err := GenerateSalt()
 	if err != nil{return nil, err}
 
-	key := DeriveKey(password, saslt)
+	key := DeriveKey(password, salt)
 
 	block, err := aes.NewCipher(key)
 	if err != nil {return nil, err}
@@ -58,7 +58,7 @@ func Encrypt{data []byte, password string} ([]byte, error) {
 	encrypted := aesGCM.Seal(nil, nonce, data, nil)
 
 	//HMAC = salt + nonce + encrypted
-	mac := hmac.new(sha256.New, key)
+	mac := hmac.New(sha256.New, key)
 	mac.Write(salt)
 	mac.Write(nonce)
 	mac.Write(encrypted)
@@ -67,8 +67,8 @@ func Encrypt{data []byte, password string} ([]byte, error) {
 
 	//Last file format: [HMAC || Salt || Nonce || Encrypted]
 	final := append(hmacSum, salt...)
-	final = append(file, nonce...)
-	final = append(file, encrypted...)
+	final = append(final, nonce...)
+	final = append(final, encrypted...)
 
 	return final, nil
 	//Which will give the file layout as: [ HMAC (32 bytes) | Salt (16 bytes) | Nonce (12 bytes) | Encrypted Data (...) ]
@@ -79,15 +79,18 @@ func Encrypt{data []byte, password string} ([]byte, error) {
 //This func verifies HMAC and decrypts the data
 func Decrypt (encryptedData []byte, password string) ([]byte, error) {
 
-	if en (encryptedData) < 60 {
+	if len(encryptedData) < 60 {
 		//HMAC + Salt + Nonce <= 60 bytes
 		return nil, errors.New("the encrypted data is too short")
 	}
+
 	//seperate vault parts
+
 	hmacStored := encryptedData[:32]
 	salt := encryptedData[32:48]
+
 	nonce := encryptedData[48:60]
-	ciphertext :== encryptedData[60:]
+	ciphertext := encryptedData[60:]
 
 	key := DeriveKey(password, salt) //Re-create the key user would have
 
@@ -100,9 +103,9 @@ func Decrypt (encryptedData []byte, password string) ([]byte, error) {
 	expectedHMAC := mac.Sum(nil)
 	
 	//Ensuring data wasn't tampered 
-	if !hmac.Equal(hmacStored, expectedHMAC) /*Comparing them both*/ {
-		return nil, errors.New{"Invalid Pssword or Currupted vault"}
-	}
+	if !hmac.Equal(hmacStored, expectedHMAC) {
+        return nil, errors.New("invalid password or corrupted vault")
+    }
 
 	block, err := aes.NewCipher(key) //Created AES block cipher
 	if err != nil {
