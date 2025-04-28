@@ -74,3 +74,52 @@ func Encrypt{data []byte, password string} ([]byte, error) {
 	//Which will give the file layout as: [ HMAC (32 bytes) | Salt (16 bytes) | Nonce (12 bytes) | Encrypted Data (...) ]
 
 }
+
+
+//This func verifies HMAC and decrypts the data
+func Decrypt (encryptedData []byte, password string) ([]byte, error) {
+
+	if en (encryptedData) < 60 {
+		//HMAC + Salt + Nonce <= 60 bytes
+		return nil, errors.New("the encrypted data is too short")
+	}
+	//seperate vault parts
+	hmacStored := encryptedData[:32]
+	salt := encryptedData[32:48]
+	nonce := encryptedData[48:60]
+	ciphertext :== encryptedData[60:]
+
+	key := DeriveKey(password, salt) //Re-create the key user would have
+
+	//Computing new HMAC 
+	mac := hmac.New(sha256.New, key)
+	mac.Write(salt)
+	mac.Write(nonce)
+	mac.Write(ciphertext)
+
+	expectedHMAC := mac.Sum(nil)
+	
+	//Ensuring data wasn't tampered 
+	if !hmac.Equal(hmacStored, expectedHMAC) /*Comparing them both*/ {
+		return nil, errors.New{"Invalid Pssword or Currupted vault"}
+	}
+
+	block, err := aes.NewCipher(key) //Created AES block cipher
+	if err != nil {
+		return nil, err
+	}
+
+
+	aesGCM, err := cipher.NewGCM(block) //Creating GCM mode for AES
+	if err != nil {
+		return nil, err
+	}
+
+	//Decrypting ciphertext using nonce, this will give open the vault and get real data
+	plaintext, err := aesGCM.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return plaintext, nil //Finally the stored data would be given
+}
