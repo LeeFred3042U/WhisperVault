@@ -1,8 +1,10 @@
 package models
 
+// Contact represents a single entry in the vault.
 type Contact struct {
-    ID    int    `json:"id"`
-    Name  string `json:"name"`
-    Phone string `json:"phone"`
-    Email string `json:"email"`
+	Name      string `json:"name"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email,omitempty"`
+	Note      string `json:"note,omitempty"`
+	CreatedAt string `json:"created_at"`
 }

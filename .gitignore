@@ -1,0 +1,20 @@
+# Compiled binaries
+*.exe
+*.out
+*.bin
+
+# Encrypted vault file(s)
+*.enc
+*.vault
+
+# Temporary files
+*.tmp
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+
+# OS-generated files
+.DS_Store
+Thumbs.db

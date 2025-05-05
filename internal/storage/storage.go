@@ -3,7 +3,7 @@ package storage
 import (
 	"os"
 	"errors"
-	"enooding/json"
+	"encoding/json"
 	
 	"WhisperVault/internal/crypto"
 	"WhisperVault/internal/models"
